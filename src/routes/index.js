@@ -6,6 +6,11 @@ import {
     ArticleList,
     ArticleLEdit
 } from "../views";
+import { 
+    DashboardOutlined, 
+    UnorderedListOutlined, 
+    SettingOutlined 
+} from '@ant-design/icons'
 
 export const mainRouter = [{
     pathname:'/login',
@@ -17,15 +22,24 @@ export const mainRouter = [{
 
 export const adminRouter = [{
     pathname:'/admin/dashboard',
-    component: Dashboard
-},{
-    pathname:'/admin/settings',
-    component: Settings
+    component: Dashboard,
+    title: "仪表盘",
+    isNav: true,
+    icon: DashboardOutlined
 },{
     pathname:'/admin/article',
     component: ArticleList,
-    exact: true
+    exact: true,
+    title: "文章管理",
+    isNav: true,
+    icon: UnorderedListOutlined
 },{
     pathname:'/admin/article/edit/:id',
     component: ArticleLEdit
+},{
+    pathname:'/admin/settings',
+    component: Settings,
+    title: "设置",
+    isNav: true,
+    icon: SettingOutlined
 }]
