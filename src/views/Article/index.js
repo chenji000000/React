@@ -1,5 +1,12 @@
 import React, { Component } from 'react'
-import { Card, Button, Table, Tag } from 'antd'
+import { 
+    Card, 
+    Button, 
+    Table, 
+    Tag, 
+    message
+} from 'antd'
+import moment from 'moment'
 import {getArticle} from '../../api'
 
 const titleDisplayMap = {
@@ -9,6 +16,7 @@ const titleDisplayMap = {
     createAt: "创建时间",
     amount: "阅读量"
 }
+const ButtonGroup = Button.Group
 
 export default class Article extends Component {
 
@@ -17,12 +25,13 @@ export default class Article extends Component {
         this.state = {
             dataSource : [],
             columns : [],
-            total : 0
+            total : 0,
+            isLoading: false
         }
     }
 
     createColums = (ccolumnKeys) => {
-        return ccolumnKeys.map((item) => {
+        const columns = ccolumnKeys.map((item) => {
             if (item === "amount") {
                 return {
                     title: titleDisplayMap[item],
@@ -33,15 +42,42 @@ export default class Article extends Component {
                     }
                 }
             }
+            if (item === "createAt") {
+                return {
+                    title: titleDisplayMap[item],
+                    key: item,
+                    render: (text, record) => {
+                        const {createAt} = record
+                        return moment(createAt).format("YYYY-MM-DD hh:mm:ss")
+                    }
+                }
+            }
             return {
                 title: titleDisplayMap[item],
                 dataIndex: item,
                 key: item
             }
         }) 
+        columns.push({
+            title: "操作",
+            key: "action",
+            render: () => {
+                return (
+                    <ButtonGroup>
+                        <Button size="small" type="primary">编辑</Button>
+                        <Button size="small" type="danger">删除</Button>
+                    </ButtonGroup>
+                )
+                
+            }
+        })
+        return columns
     }
 
     getData = () => {
+        this.setState({
+            isLoading: true
+        })
         getArticle()
             .then(resp => {
                 const columnKeys = Object.keys(resp.list[0])
@@ -52,6 +88,16 @@ export default class Article extends Component {
                     columns 
                 })
             })
+            .catch(err => {
+                message.error(err)
+            })
+            .finally( ()=> {
+                this.setState({
+                    isLoading: false
+                })
+            }
+
+            )
     }
 
    componentDidMount() {
@@ -63,9 +109,11 @@ export default class Article extends Component {
             title="文章列表" 
             bordered={false}
             extra={<Button>导出Excel</Button>}>
-               <Table 
+               <Table
+                 rowKey={record=> record.id} 
                  dataSource={this.state.dataSource} 
                  columns={this.state.columns}
+                 loading={this.state.isLoading}
                  pagination={{
                      total: this.state.total,
                      hideOnSinglePage: true
