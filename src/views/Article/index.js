@@ -4,10 +4,13 @@ import {
     Button, 
     Table, 
     Tag, 
-    message
+    message,
+    Modal,
+    Typography,
+    Tooltip
 } from 'antd'
 import moment from 'moment'
-import {getArticle} from '../../api'
+import {getArticle, deleteArticleById} from '../../api'
 import XLSX from 'xlsx'
 
 const titleDisplayMap = {
@@ -29,7 +32,11 @@ export default class Article extends Component {
             total : 0,
             isLoading: false,
             offset:0,
-            limited:10
+            limited:10,
+            isShowArticleModal: false,
+            deleteArticleConfirmLoading: false,
+            deleteArticleTitle: "",
+            deleteArticleID: null
         }
     }
 
@@ -41,7 +48,11 @@ export default class Article extends Component {
                     key: item,
                     render: (text, record) => {
                         const {amount} = record
-                        return <Tag color={amount > 200 ? "red" : "green"}>{record.amount}</Tag>
+                        return (
+                            <Tooltip title={amount > 200 ? "超过200" : "不到200"}>
+                                <Tag color={amount > 200 ? "red" : "green"}>{record.amount}</Tag>
+                            </Tooltip>
+                        )
                     }
                 }
             }
@@ -64,17 +75,62 @@ export default class Article extends Component {
         columns.push({
             title: "操作",
             key: "action",
-            render: () => {
+            render: (record) => {
                 return (
                     <ButtonGroup>
-                        <Button size="small" type="primary">编辑</Button>
-                        <Button size="small" type="danger">删除</Button>
+                        <Button size="small" type="primary" onClick={this.onEdit.bind(this, record.id)}>编辑</Button>
+                        <Button size="small" type="danger" onClick={this.onDelete.bind(this, record)}>删除</Button>
                     </ButtonGroup>
                 )
                 
             }
         })
         return columns
+    }
+// 编辑操作
+    onEdit = (id) => {
+        this.props.history.push(`/admin/article/edit/${id}`)
+    }
+// 删除操作(显示modal)
+    onDelete = (record) => {
+        this.setState({
+            isShowArticleModal: true,
+            deleteArticleTitle: record.title,
+            deleteArticleID: record.id
+        })
+    }
+// 隐藏modal
+    hideDeleteModal =() => {
+        this.setState({
+            isShowArticleModal: false,
+            deleteArticleConfirmLoading: false,
+            deleteArticleTitle: ""
+        })
+    }
+
+    // 真正删除操作
+    deleteArticle = () => {
+        this.setState({
+            deleteArticleConfirmLoading: true
+        })
+        deleteArticleById(this.state.deleteArticleID)
+        .then(resp => {
+            message.success(resp.msg)
+            this.setState({
+                offset: 0
+              }, () => {
+                this.getData()
+              })
+        })
+        .catch(err => {
+
+        })
+        .finally(() => {
+            this.setState({
+                deleteArticleConfirmLoading: false,
+                isShowArticleModal: false
+              })
+        })
     }
 
     onPageChange = (page, pageSize) => {
@@ -166,8 +222,18 @@ export default class Article extends Component {
                      onShowSizeChange: this.onShowSizeChange
                  }}
                >
-
                </Table> 
+               <Modal
+                    title='此操作不可逆，请谨慎！！！'
+                    visible={this.state.isShowArticleModal}
+                    onCancel={this.hideDeleteModal}
+                    confirmLoading={this.state.deleteArticleConfirmLoading}
+                    onOk={this.deleteArticle}
+                >
+                    <Typography>
+                        确定要删除<span style={{color: '#f00'}}>{this.state.deleteArticleTitle}</span>吗？
+                    </Typography>
+                </Modal>
             </Card>
         )
     }

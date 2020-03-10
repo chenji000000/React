@@ -13,6 +13,8 @@ class Frame extends Component {
     }
 
     render() {
+        const selectedKeysArr = this.props.location.pathname.split('/')
+        selectedKeysArr.length = 3
         return (
             <Layout style={{minHeight:'100%'}}>
                 <Header className="header cj-header">
@@ -24,7 +26,7 @@ class Frame extends Component {
                 <Sider width={200} className="site-layout-background">
                     <Menu
                     mode="inline"
-                    selectedKeys={[this.props.location.pathname]}
+                    selectedKeys={[selectedKeysArr.join('/')]}
                     onClick={this.onMenuClick}
                     style={{ height: '100%', borderRight: 0 }}
                     >
