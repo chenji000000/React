@@ -1,16 +1,69 @@
 import React, { Component } from 'react'
-import { Layout, Menu } from 'antd';
+import { 
+    Layout,
+    Menu,
+    Badge,
+    Dropdown,
+    Avatar 
+} from 'antd';
 import { withRouter } from "react-router-dom"
 import logo from './logo.png'
 import "./frame.less"
+import { connect } from 'react-redux'
+import { getNotificationList } from '../../actions/notifications'
+import { 
+  DownOutlined 
+} from '@ant-design/icons'
 
 const { Header, Content, Sider } = Layout;
+const mapState = state => {
+  return {
+    notificationsCount: state.notifications.list.filter(item => item.hasRead === false).length,
+  }
+}
 
+@connect(mapState, { getNotificationList })
 @withRouter
 class Frame extends Component {  
+    componentDidMount () {
+      this.props.getNotificationList()
+    }
+
     onMenuClick = ({ key }) => {
         this.props.history.push(key)
     }
+    
+    onDropdownMenuClick = ({ key }) => {
+        if (key === '/logout') {
+        //   this.props.logout()
+        } else {
+          this.props.history.push(key)
+        }
+      }
+
+    renderDropdown = () => (
+        <Menu onClick={this.onDropdownMenuClick}>
+          <Menu.Item
+            key="/admin/notifications"
+          >
+            <Badge 
+              dot={Boolean(this.props.notificationsCount)}
+            >
+              通知中心
+            </Badge>
+          </Menu.Item>
+          <Menu.Item
+            key="/admin/profile"
+          >
+            个人设置
+          </Menu.Item>
+          <Menu.Item
+            key="/logout"
+          >
+            退出登录
+          </Menu.Item>
+        </Menu>
+      )
 
     render() {
         const selectedKeysArr = this.props.location.pathname.split('/')
@@ -20,6 +73,22 @@ class Frame extends Component {
                 <Header className="header cj-header">
                     <div className="cj-logo">
                         <img src={logo} alt=""/>
+                    </div>
+                    <div>
+                    <Dropdown overlay={this.renderDropdown()}>
+                        
+                        <div 
+                            style={{height:'100%', display: 'flex', alignItems:'center'}}
+                        >
+                            <Avatar 
+                                src="" 
+                            />
+                            <span>欢迎您！大哥</span>
+                            <Badge count={this.props.notificationsCount} offset={[-10, -10]}>
+                                <DownOutlined />
+                            </Badge>
+                        </div>
+                    </Dropdown>
                     </div>
                 </Header>
                 <Layout>

@@ -4,7 +4,8 @@ import {
     NotFound,
     Settings,
     ArticleList,
-    ArticleLEdit
+    ArticleLEdit,
+    Notifications
 } from "../views";
 import { 
     DashboardOutlined, 
@@ -42,4 +43,7 @@ export const adminRouter = [{
     title: "设置",
     isNav: true,
     icon: SettingOutlined
+},{
+    pathname:'/admin/notifications',
+    component: Notifications
 }]
