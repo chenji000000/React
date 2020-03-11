@@ -13,6 +13,7 @@ const service1 = axios.create({
 
 service.interceptors.request.use((config) => {
     config.data = Object.assign({}, config.data, {
+        // authToken: window.localStorage.getItem('authToken')
         authToken: "dhajdhjhdjahdjhjhdh"
     })
     return config

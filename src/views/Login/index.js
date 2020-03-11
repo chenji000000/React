@@ -62,15 +62,15 @@ class Login extends Component {
                 placeholder="密码"
               />
           </Form.Item>
-          <Form.Item>
-            <Form.Item
+          <Form.Item
               name='remember'
               valuePropName="checked"
               noStyle
             >
               <Checkbox disabled={this.props.isLoading} >记住我</Checkbox>
             
-            </Form.Item>
+          </Form.Item>
+          <Form.Item>
             <Button loading={this.props.isLoading} type="primary" htmlType="submit" className="login-form-button">
                   登录
             </Button>

@@ -5,7 +5,9 @@ import {
     Settings,
     ArticleList,
     ArticleLEdit,
-    Notifications
+    Notifications,
+    NoAuth,
+    Profile
 } from "../views";
 import { 
     DashboardOutlined, 
@@ -50,5 +52,13 @@ export const adminRouter = [{
 },{
     pathname:'/admin/notifications',
     component: Notifications,
+    roles: ['001', '002', '003']
+},{
+    pathname: '/admin/noauth',
+    component: NoAuth,
+    roles: ['001', '002', '003']
+}, {
+    pathname: '/admin/profile',
+    component: Profile,
     roles: ['001', '002', '003']
 }]
