@@ -7,6 +7,10 @@ const service = axios.create({
     baseURL: isDev ? 'http://rap2api.taobao.org/app/mock/176929' : ''
 })
 
+const service1 = axios.create({
+    baseURL: isDev ? 'http://rap2api.taobao.org/app/mock/176929' : ''
+  })
+
 service.interceptors.request.use((config) => {
     config.data = Object.assign({}, config.data, {
         authToken: "dhajdhjhdjahdjhjhdh"
@@ -53,3 +57,8 @@ export const getArticleAmount = () => {
 export const getNotifications = () => {
     return service.post('/api/v1/notifications')
 }
+
+// 登录接口
+export const loginRequest = (userInfo) => {
+    return service1.post('/api/v1/login', userInfo)
+  }

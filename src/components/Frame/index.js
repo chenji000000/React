@@ -14,15 +14,18 @@ import { getNotificationList } from '../../actions/notifications'
 import { 
   DownOutlined 
 } from '@ant-design/icons'
+import { logout } from '../../actions/user'
 
 const { Header, Content, Sider } = Layout;
 const mapState = state => {
   return {
     notificationsCount: state.notifications.list.filter(item => item.hasRead === false).length,
+    avatar: state.user.avatar,
+    displayName: state.user.displayName
   }
 }
 
-@connect(mapState, { getNotificationList })
+@connect(mapState, { getNotificationList, logout })
 @withRouter
 class Frame extends Component {  
     componentDidMount () {
@@ -35,7 +38,7 @@ class Frame extends Component {
     
     onDropdownMenuClick = ({ key }) => {
         if (key === '/logout') {
-        //   this.props.logout()
+          this.props.logout()
         } else {
           this.props.history.push(key)
         }
@@ -81,9 +84,9 @@ class Frame extends Component {
                             style={{height:'100%', display: 'flex', alignItems:'center'}}
                         >
                             <Avatar 
-                                src="" 
+                                src={this.props.avatar}
                             />
-                            <span>欢迎您！大哥</span>
+                            <span>欢迎您！{this.props.displayName}</span>
                             <Badge count={this.props.notificationsCount} offset={[-10, -10]}>
                                 <DownOutlined />
                             </Badge>

@@ -26,24 +26,29 @@ export const adminRouter = [{
     component: Dashboard,
     title: "仪表盘",
     isNav: true,
-    icon: DashboardOutlined
+    icon: DashboardOutlined,
+    roles: ['001', '002', '003']
 },{
     pathname:'/admin/article',
     component: ArticleList,
     exact: true,
     title: "文章管理",
     isNav: true,
-    icon: UnorderedListOutlined
+    icon: UnorderedListOutlined,
+    roles: ['001', '002']
 },{
     pathname:'/admin/article/edit/:id',
-    component: ArticleLEdit
+    component: ArticleLEdit,
+    roles: ['001', '002']
 },{
     pathname:'/admin/settings',
     component: Settings,
     title: "设置",
     isNav: true,
-    icon: SettingOutlined
+    icon: SettingOutlined,
+    roles: ['001']
 },{
     pathname:'/admin/notifications',
-    component: Notifications
+    component: Notifications,
+    roles: ['001', '002', '003']
 }]
